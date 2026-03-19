@@ -210,7 +210,7 @@ npx react-native run-android
 
 - [ Proposal Hackathon](https://drive.google.com/drive/folders/1jnZo5Mrgkj-uQ8bBl3ZXvLH0nUBbgs2M?usp=sharing)
 - [ Database Schema](./agrolens_database.sql)
-- [ Proposal Hackathon](https://portofolio-sonic.vercel.app/)
+- [ Portofolio Sonic](https://portofolio-sonic.vercel.app/)
 
 ---
 
