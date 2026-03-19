@@ -28,10 +28,10 @@ AgroLens AI adalah platform agritech terintegrasi yang menghubungkan **petani la
 
 | Nama | Prodi | Peran |
 |---|---|---|
-| **Reinhart** | Teknik Informatika | Full Stack Developer & AI Engineer (Ketua) |
-| **Valendino** | Bisnis Digital | Business Analyst & Product Manager |
-| **Djefri** | Kewirausahaan | Business Model & Go-to-Market Strategy |
-| **Kelvin** | Bisnis Digital | UI/UX Design & Market Research |
+| **Reinhart Jens Robert** | Teknik Informatika | Full Stack Developer & AI Engineer (Ketua) |
+| **Happy Valendino Hendrik Budi** | Bisnis Digital | Business Analyst & Product Manager |
+| **Djefri Wotyla Nugroho** | Kewirausahaan |  UI/UX Design & Market Research  |
+| **Melky Rafael Nuben** | Bisnis Digital | Business Model & Go-to-Market Strategy |
 
 ---
 
