@@ -12,9 +12,11 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-agro-green rounded-lg flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-white" />
-            </div>
+            <img
+            src="/src/assets/images/agrolens-logo.png"
+            alt="AgroLens AI"
+            className="w-8 h-8 rounded-lg object-cover"
+            />
             <div className="flex flex-col leading-none">
               <span className="font-bold text-agro-dark text-lg">AgroLens</span>
               <span className="text-[10px] text-agro-green font-semibold tracking-wider uppercase">AI Platform</span>

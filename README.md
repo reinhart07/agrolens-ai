@@ -208,8 +208,9 @@ npx react-native run-android
 
 ## 📄 Dokumen
 
-- [📋 Proposal Hackathon](./Sonic_Reinhart_Proposal%20Hackathon%20dan%20Digdaya%202026.pdf)
-- [🗄️ Database Schema](./agrolens_database.sql)
+- [ Proposal Hackathon](https://drive.google.com/drive/folders/1jnZo5Mrgkj-uQ8bBl3ZXvLH0nUBbgs2M?usp=sharing)
+- [ Database Schema](./agrolens_database.sql)
+- [ Proposal Hackathon](https://portofolio-sonic.vercel.app/)
 
 ---
 

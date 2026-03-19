@@ -44,7 +44,7 @@ export default function TeamSection() {
     {
       name: 'Djefri Wotyla Nugroho',
       role: 'UI/UX Design & Market Research',
-      prodi: 'Bisnis Digital',
+      prodi: 'Kewirausahaan',
       desc: 'Mendesain antarmuka yang intuitif untuk petani di lapangan dan memastikan pengalaman pengguna yang optimal.',
       avatar: '/src/assets/images/team-djefri.jpg',
       fallback: 'KE',
