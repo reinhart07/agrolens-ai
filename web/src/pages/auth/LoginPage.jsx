@@ -1,20 +1,22 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Leaf, Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
 
 export default function LoginPage() {
-  const [show, setShow] = useState(false)
-  const [role, setRole] = useState('petani')
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [show, setShow]       = useState(false)
+  const [role, setRole]       = useState('petani')
+  const [form, setForm]       = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const navigate = useNavigate()
+  const [error, setError]     = useState('')
+  const navigate              = useNavigate()
+  const { login }             = useAuth()
 
   const roles = [
-    { value: 'petani', label: 'Petani', emoji: '🌾' },
-    { value: 'pembeli', label: 'Pembeli', emoji: '🛒' },
-    { value: 'mitra', label: 'Mitra Keuangan', emoji: '🏦' },
-    { value: 'admin', label: 'Admin', emoji: '⚙️' },
+    { value: 'petani',  label: 'Petani',         emoji: '🌾' },
+    { value: 'pembeli', label: 'Pembeli',         emoji: '🛒' },
+    { value: 'mitra',   label: 'Mitra Keuangan',  emoji: '🏦' },
+    { value: 'admin',   label: 'Admin',           emoji: '⚙️' },
   ]
 
   const handleSubmit = async (e) => {
@@ -22,14 +24,14 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      // TODO: connect ke FastAPI /auth/login
-      await new Promise(r => setTimeout(r, 1000))
-      if (role === 'petani') navigate('/farmer/dashboard')
-      else if (role === 'pembeli') navigate('/buyer/home')
-      else if (role === 'mitra') navigate('/partner/dashboard')
-      else navigate('/admin/dashboard')
-    } catch {
-      setError('Email atau password salah. Silakan coba lagi.')
+      const user = await login(form.email, form.password)
+      // Redirect sesuai role
+      if (user.role === 'petani')       navigate('/farmer/dashboard')
+      else if (user.role === 'pembeli') navigate('/buyer/home')
+      else if (user.role === 'mitra')   navigate('/partner/dashboard')
+      else                              navigate('/admin/dashboard')
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Email atau password salah. Silakan coba lagi.')
     } finally {
       setLoading(false)
     }
@@ -50,7 +52,6 @@ export default function LoginPage() {
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-agro-green/10 rounded-full blur-3xl" />
         <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
 
-        {/* Logo */}
         <div className="relative flex items-center gap-3">
           <div className="w-10 h-10 bg-agro-green rounded-xl flex items-center justify-center">
             <Leaf className="w-6 h-6 text-white" />
@@ -61,7 +62,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Center content */}
         <div className="relative space-y-6">
           <h2 className="text-4xl font-extrabold text-white leading-tight">
             Ekosistem Pertanian Digital
@@ -72,8 +72,6 @@ export default function LoginPage() {
           <p className="text-gray-400 text-lg leading-relaxed">
             Menghubungkan petani, pembeli, dan lembaga keuangan dalam satu platform AI terintegrasi.
           </p>
-
-          {/* Feature list */}
           <div className="space-y-3">
             {[
               'Prediksi harga komoditas 7–30 hari ke depan',
@@ -91,7 +89,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Bottom badge */}
         <div className="relative">
           <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
             <span className="text-xs text-gray-400">PIDI DIGDAYA X HACKATHON 2026</span>
@@ -112,7 +109,6 @@ export default function LoginPage() {
             <span className="font-extrabold text-white text-lg">AgroLens AI</span>
           </div>
 
-          {/* Header */}
           <div>
             <h1 className="text-3xl font-extrabold text-white mb-2">Selamat datang!</h1>
             <p className="text-gray-400">Masuk ke akun AgroLens AI kamu</p>
@@ -123,6 +119,7 @@ export default function LoginPage() {
             {roles.map((r) => (
               <button
                 key={r.value}
+                type="button"
                 onClick={() => setRole(r.value)}
                 className={`flex flex-col items-center gap-1 py-2.5 rounded-xl border text-xs font-semibold transition-all duration-200 ${
                   role === r.value
@@ -138,8 +135,6 @@ export default function LoginPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-
-            {/* Email */}
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-300">Email</label>
               <div className="relative">
@@ -155,7 +150,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Password */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-gray-300">Password</label>
@@ -173,48 +167,37 @@ export default function LoginPage() {
                   required
                   className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-12 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-agro-green focus:bg-white/10 transition-all"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShow(!show)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-                >
+                <button type="button" onClick={() => setShow(!show)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
                   {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            {/* Error */}
             {error && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
                 <p className="text-red-400 text-sm">{error}</p>
               </div>
             )}
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-agro-green hover:bg-agro-teal disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
+              className="w-full bg-agro-green hover:bg-agro-teal disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                <>
-                  Masuk
-                  <ArrowRight className="w-4 h-4" />
-                </>
+                <>Masuk <ArrowRight className="w-4 h-4" /></>
               )}
             </button>
           </form>
 
-          {/* Divider */}
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-white/10" />
             <span className="text-xs text-gray-600">atau</span>
             <div className="flex-1 h-px bg-white/10" />
           </div>
 
-          {/* Register link */}
           <p className="text-center text-gray-400 text-sm">
             Belum punya akun?{' '}
             <Link to="/register" className="text-agro-green font-semibold hover:underline">
@@ -222,13 +205,11 @@ export default function LoginPage() {
             </Link>
           </p>
 
-          {/* Back to home */}
           <p className="text-center">
             <Link to="/" className="text-xs text-gray-600 hover:text-gray-400 transition-colors">
               ← Kembali ke beranda
             </Link>
           </p>
-
         </div>
       </div>
     </div>
