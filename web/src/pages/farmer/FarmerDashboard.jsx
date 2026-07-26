@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { hargaAPI, kreditAPI } from '../../services/api'
+import api, { hargaAPI, kreditAPI } from '../../services/api'
 import FarmerLayout from '../../components/layout/FarmerLayout'
 import {
   TrendingUp, TrendingDown, ShoppingBag, CreditCard,
@@ -51,9 +51,10 @@ function HargaCard({ komoditas, harga, prediksi, perubahan, trend }) {
 
 export default function FarmerDashboard() {
   const { user } = useAuth()
-  const [hargaData, setHargaData]   = useState([])
-  const [kreditData, setKreditData] = useState(null)
-  const [loading, setLoading]       = useState(true)
+  const [hargaData, setHargaData]     = useState([])
+  const [kreditData, setKreditData]   = useState(null)
+  const [komoditasCount, setKomoditasCount] = useState(0)
+  const [loading, setLoading]         = useState(true)
 
   // Komoditas untuk demo prediksi harga
   const komoditasList = [
@@ -65,6 +66,10 @@ export default function FarmerDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // Fetch jumlah komoditas aktif
+    const komoditasRes = await api.get('/komoditas/my')
+    const aktif = (komoditasRes.data.komoditas || []).filter(k => k.is_active).length
+    setKomoditasCount(aktif)
       try {
         // Fetch prediksi harga untuk beberapa komoditas
         const hargaPromises = komoditasList.map(k =>
@@ -131,8 +136,8 @@ export default function FarmerDashboard() {
         <StatCard
           icon={ShoppingBag}
           label="Komoditas Aktif"
-          value="0"
-          sub="Belum ada listing"
+          value={komoditasCount}
+          sub={komoditasCount > 0 ? `${komoditasCount} produk terdaftar` : 'Belum ada listing'}
           color="text-agro-green"
           bg="bg-agro-green/10"
         />

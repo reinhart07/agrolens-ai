@@ -30,30 +30,18 @@ export default function TeamSection() {
     },
     {
       name: 'Melky Rafael Nuben',
-      role: 'Business Model & Go-to-Market',
+      role: 'Business Model & UI/UX Design',
       prodi: 'Bisnis Digital',
-      desc: 'Merancang model bisnis yang berkelanjutan dan strategi penetrasi pasar untuk ekosistem pertanian Indonesia.',
+      desc: 'Merancang model bisnis yang berkelanjutan dan strategi penetrasi pasar untuk ekosistem pertanian Indonesia dan Mendesain antarmuka yang intuitif untuk petani di lapangan dan memastikan pengalaman pengguna yang optimal',
       avatar: '/src/assets/images/team-melky.jpg',
       fallback: 'ME',
       icon: Lightbulb,
       gradient: 'from-amber-500 to-orange-600',
       iconBg: 'bg-amber-500/10',
       iconColor: 'text-amber-400',
-      skills: ['Business Canvas', 'GTM Strategy', 'Pitching', 'Finance'],
+      skills: ['Business Canvas', 'GTM Strategy', 'Pitching', 'Finance', 'Figma', 'UI Design', 'User Research', 'Prototyping'],
     },
-    {
-      name: 'Djefri Wotyla Nugroho',
-      role: 'UI/UX Design & Market Research',
-      prodi: 'Kewirausahaan',
-      desc: 'Mendesain antarmuka yang intuitif untuk petani di lapangan dan memastikan pengalaman pengguna yang optimal.',
-      avatar: '/src/assets/images/team-djefri.jpg',
-      fallback: 'KE',
-      icon: Palette,
-      gradient: 'from-agro-purple to-primary-600',
-      iconBg: 'bg-purple-500/10',
-      iconColor: 'text-purple-400',
-      skills: ['Figma', 'UI Design', 'User Research', 'Prototyping'],
-    },
+ 
   ]
 
   return (

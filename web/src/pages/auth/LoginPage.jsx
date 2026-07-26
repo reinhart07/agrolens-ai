@@ -13,10 +13,10 @@ export default function LoginPage() {
   const { login }             = useAuth()
 
   const roles = [
-    { value: 'petani',  label: 'Petani',         emoji: '🌾' },
-    { value: 'pembeli', label: 'Pembeli',         emoji: '🛒' },
-    { value: 'mitra',   label: 'Mitra Keuangan',  emoji: '🏦' },
-    { value: 'admin',   label: 'Admin',           emoji: '⚙️' },
+    { value: 'petani',  label: 'Petani',        emoji: '🌾' },
+    { value: 'pembeli', label: 'Pembeli',        emoji: '🛒' },
+    { value: 'mitra',   label: 'Mitra Keuangan', emoji: '🏦' },
+    { value: 'admin',   label: 'Admin',          emoji: '⚙️' },
   ]
 
   const handleSubmit = async (e) => {
@@ -26,9 +26,9 @@ export default function LoginPage() {
     try {
       const user = await login(form.email, form.password)
       // Redirect sesuai role
-      if (user.role === 'petani')       navigate('/farmer/dashboard')
+      if      (user.role === 'petani')  navigate('/farmer/dashboard')
       else if (user.role === 'pembeli') navigate('/buyer/home')
-      else if (user.role === 'mitra')   navigate('/partner/dashboard')
+      else if (user.role === 'mitra')   navigate('/mitra/dashboard')  // ← fix
       else                              navigate('/admin/dashboard')
     } catch (err) {
       setError(err.response?.data?.detail || 'Email atau password salah. Silakan coba lagi.')
@@ -117,16 +117,12 @@ export default function LoginPage() {
           {/* Role selector */}
           <div className="grid grid-cols-4 gap-2">
             {roles.map((r) => (
-              <button
-                key={r.value}
-                type="button"
-                onClick={() => setRole(r.value)}
+              <button key={r.value} type="button" onClick={() => setRole(r.value)}
                 className={`flex flex-col items-center gap-1 py-2.5 rounded-xl border text-xs font-semibold transition-all duration-200 ${
                   role === r.value
                     ? 'bg-agro-green/20 border-agro-green text-agro-green'
                     : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
-                }`}
-              >
+                }`}>
                 <span className="text-lg">{r.emoji}</span>
                 {r.label}
               </button>
@@ -139,35 +135,24 @@ export default function LoginPage() {
               <label className="text-sm font-medium text-gray-300">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type="email"
-                  placeholder="email@contoh.com"
-                  value={form.email}
-                  onChange={e => setForm({ ...form, email: e.target.value })}
-                  required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-agro-green focus:bg-white/10 transition-all"
-                />
+                <input type="email" placeholder="email@contoh.com" value={form.email}
+                  onChange={e => setForm({ ...form, email: e.target.value })} required
+                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-agro-green focus:bg-white/10 transition-all" />
               </div>
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-gray-300">Password</label>
-                <Link to="/forgot-password" className="text-xs text-agro-green hover:underline">
-                  Lupa password?
-                </Link>
+                <Link to="/forgot-password" className="text-xs text-agro-green hover:underline">Lupa password?</Link>
               </div>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type={show ? 'text' : 'password'}
-                  placeholder="Masukkan password"
-                  value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
-                  required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-12 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-agro-green focus:bg-white/10 transition-all"
-                />
-                <button type="button" onClick={() => setShow(!show)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                <input type={show ? 'text' : 'password'} placeholder="Masukkan password"
+                  value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required
+                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-12 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-agro-green focus:bg-white/10 transition-all" />
+                <button type="button" onClick={() => setShow(!show)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
                   {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -179,16 +164,12 @@ export default function LoginPage() {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-agro-green hover:bg-agro-teal disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>Masuk <ArrowRight className="w-4 h-4" /></>
-              )}
+            <button type="submit" disabled={loading}
+              className="w-full bg-agro-green hover:bg-agro-teal disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2">
+              {loading
+                ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                : <>Masuk <ArrowRight className="w-4 h-4" /></>
+              }
             </button>
           </form>
 

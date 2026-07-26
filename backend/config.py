@@ -7,12 +7,12 @@ class Settings(BaseSettings):
     DB_PORT    : int = 3306
     DB_USER    : str = "root"
     DB_PASSWORD: str = ""
-    DB_NAME    : str = "agrolens_ai"
+    DB_NAME    : str = "agrolens_database"
 
     # JWT
     SECRET_KEY                  : str = "agrolens-secret-key-2026"
     ALGORITHM                   : str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES : int = 1440  # 24 jam
+    ACCESS_TOKEN_EXPIRE_MINUTES : int = 1440
 
     # ML Models
     MODEL_DIR: str = "./ml_models/"
@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     # External APIs
     GROQ_API_KEY: str = ""
     BMKG_API_URL: str = "https://api.bmkg.go.id/publik/prakiraan-cuaca"
+
+    # Cloudinary
+    CLOUDINARY_CLOUD_NAME: str = ""
+    CLOUDINARY_API_KEY   : str = ""
+    CLOUDINARY_API_SECRET: str = ""
 
     # App
     APP_ENV: str = "development"
