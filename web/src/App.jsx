@@ -26,6 +26,7 @@ import AdminDashboard      from './pages/admin/AdminDashboard'
 import AdminUsers          from './pages/admin/AdminUsers'
 import AdminKomoditas      from './pages/admin/AdminKomoditas'
 import AdminPesanan        from './pages/admin/AdminPesanan'
+import AdminPremium        from './pages/admin/AdminPremium'
 import AdminHarga          from './pages/admin/AdminHarga'
 import AdminKredit         from './pages/admin/AdminKredit'
 import AdminLaporan        from './pages/admin/AdminLaporan'
@@ -88,6 +89,7 @@ function AppRoutes() {
       <Route path="/admin/users"     element={<ProtectedRoute allowedRoles={['admin']}><AdminUsers /></ProtectedRoute>} />
       <Route path="/admin/komoditas" element={<ProtectedRoute allowedRoles={['admin']}><AdminKomoditas /></ProtectedRoute>} />
       <Route path="/admin/pesanan"   element={<ProtectedRoute allowedRoles={['admin']}><AdminPesanan /></ProtectedRoute>} />
+      <Route path="/admin/premium"   element={<ProtectedRoute allowedRoles={['admin']}><AdminPremium /></ProtectedRoute>} />
       <Route path="/admin/harga"     element={<ProtectedRoute allowedRoles={['admin']}><AdminHarga /></ProtectedRoute>} />
       <Route path="/admin/kredit"    element={<ProtectedRoute allowedRoles={['admin']}><AdminKredit /></ProtectedRoute>} />
       <Route path="/admin/laporan"   element={<ProtectedRoute allowedRoles={['admin']}><AdminLaporan /></ProtectedRoute>} />

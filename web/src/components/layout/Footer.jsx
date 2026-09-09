@@ -41,7 +41,7 @@ export default function Footer() {
               {[
                 { label: 'Marketplace', to: '/marketplace' },
                 { label: 'Prediksi Harga', to: '/harga' },
-                { label: 'Credit Scoring', to: '/kredit' },
+                { label: 'Credit Scoring (segera)', to: '/kredit' },
                 { label: 'Peta Petani', to: '/maps' },
                 { label: 'Chatbot AI', to: '/chat' },
               ].map((l, i) => (
@@ -84,11 +84,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-agro-green flex-shrink-0" />
-                <span className="text-gray-500 text-sm">tim.sonic@agrolens.id</span>
+                <span className="text-gray-500 text-sm">sonicundipa@gmail.com</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-agro-green flex-shrink-0" />
-                <span className="text-gray-500 text-sm">[Nomor HP Reinhart]</span>
+                <span className="text-gray-500 text-sm">0887435084586</span>
               </li>
             </ul>
             <div className="bg-agro-green/10 border border-agro-green/20 rounded-xl p-4 mt-4">

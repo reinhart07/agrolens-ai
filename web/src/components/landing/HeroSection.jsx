@@ -39,9 +39,9 @@ export default function HeroSection() {
               untuk Indonesia
             </h1>
             <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
-              Platform agritech berbasis AI yang menghubungkan petani langsung ke pembeli,
-              dengan prediksi harga real-time, deteksi kualitas otomatis, dan akses kredit
-              tanpa riwayat bank.
+              Platform agritech berbasis AI yang menghubungkan petani langsung ke pembeli bisnis, 
+              dengan prediksi harga real-time, marketplace B2B, 
+              dan layanan logistik terjangkau.
             </p>
           </div>
 
@@ -65,7 +65,7 @@ export default function HeroSection() {
           <div className="flex flex-wrap gap-8 pt-4 border-t border-white/10">
             {[
               { value: '33.4 Juta', label: 'Petani Indonesia (BPS 2023)' },
-              { value: '91 Juta', label: 'Penduduk Unbanked (OJK 2024)' },
+              { value: '91 Juta', label: 'Penduduk Unbanked (World Bank 2021)' },
               { value: '3 Model AI', label: 'Terintegrasi' },
             ].map((s, i) => (
               <div key={i}>
