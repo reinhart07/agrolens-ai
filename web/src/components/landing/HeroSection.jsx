@@ -65,7 +65,7 @@ export default function HeroSection() {
           <div className="flex flex-wrap gap-8 pt-4 border-t border-white/10">
             {[
               { value: '33.4 Juta', label: 'Petani Indonesia (BPS 2023)' },
-              { value: '91 Juta', label: 'Penduduk Unbanked (World Bank 2021)' },
+              { value: '97,74 juta', label: 'Penduduk Unbanked (World Bank 2021)' },
               { value: '3 Model AI', label: 'Terintegrasi' },
             ].map((s, i) => (
               <div key={i}>
