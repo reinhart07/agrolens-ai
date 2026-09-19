@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import FarmerLayout from '../../components/layout/FarmerLayout'
 import api from '../../services/api'
-import { Send, Bot, User, Loader, Sparkles } from 'lucide-react'
+import { Send, Bot, User, Loader, Sparkles, MessageSquare } from 'lucide-react'
 
 function ChatBubble({ msg }) {
   const isBot = msg.role === 'assistant'
@@ -105,8 +105,11 @@ export default function ChatbotPage() {
   return (
     <FarmerLayout>
       <div className="mb-4">
-        <h1 className="text-2xl font-extrabold text-white mb-1">🤖 Chatbot AI — AgroBot</h1>
-        <p className="text-gray-400">Tanya apa saja tentang pertanian, harga, dan kredit!</p>
+        <div className="flex items-center gap-2 mb-1">
+          <MessageSquare className="w-6 h-6 text-agro-green" />
+          <h1 className="text-2xl font-extrabold text-white">Chatbot AI — AgroBot</h1>
+        </div>
+        <p className="text-gray-400">Konsultasikan kebutuhan pertanian, informasi harga, dan panduan kredit bersama asisten AI kami.</p>
       </div>
 
       <div className="flex flex-col h-[calc(100vh-220px)] max-h-[700px]">

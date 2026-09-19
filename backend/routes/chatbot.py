@@ -58,7 +58,7 @@ async def chat(req: ChatRequest):
         messages.append({"role": "user", "content": req.message})
 
         response = client.chat.completions.create(
-            model = "qwen/qwen3.6-27b",
+            model = "qwen/qwen3.8-27b",
             messages = messages,
             max_tokens  = 500,
             temperature = 0.7,
