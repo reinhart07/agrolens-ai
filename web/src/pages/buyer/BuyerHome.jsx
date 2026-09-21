@@ -2,79 +2,63 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import BuyerLayout from '../../components/layout/BuyerLayout'
-import api from '../../services/api'
+import { komoditasAPI } from '../../services/api'
 import {
-  ShoppingCart, Package, Star, ArrowRight,
-  MapPin, Leaf, Search, Heart, TrendingDown
+  ShoppingCart, Package, TrendingDown, Star,
+  ArrowRight, MapPin, Leaf, Search, Heart
 } from 'lucide-react'
 
-function KomoditasCard({ item, wishlist, onToggleWishlist }) {
+function KomoditasCard({ item, inWishlist, onAddWishlist, onRemoveWishlist }) {
   const navigate = useNavigate()
-  const gradeColor = {
-    A: 'bg-agro-green/20 text-agro-green',
-    B: 'bg-amber-500/20 text-amber-400',
-    C: 'bg-red-500/20 text-red-400',
-  }
-  const isWishlisted = wishlist.some(w => w.id === item.id)
+  const gradeColor = item.grade === 'A' ? 'bg-agro-green/20 text-agro-green' : 'bg-amber-500/20 text-amber-400'
 
   const handleBeli = () => {
-    navigate('/buyer/checkout', {
-      state: {
-        produk: {
-          id       : item.id,
-          nama     : item.nama,
-          harga    : item.harga,
-          satuan   : item.satuan || 'kg',
-          petani   : item.petani_name,
-          petani_id: item.petani_id,
-          foto_url : item.foto_url,
-        }
-      }
-    })
+    navigate('/buyer/checkout', { state: { produk: item } })
+  }
+
+  const toggleWishlist = (e) => {
+    e.stopPropagation()
+    if (inWishlist) {
+      onRemoveWishlist(item.id)
+    } else {
+      onAddWishlist(item)
+    }
   }
 
   return (
     <div className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/8 hover:-translate-y-1 transition-all duration-300">
-      <div className="relative h-40 overflow-hidden bg-agro-green/5">
-        {item.foto_url ? (
-          <img src={item.foto_url} alt={item.nama}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            onError={e => { e.target.style.display = 'none' }} />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-4xl">🌾</div>
-        )}
+      <div className="relative h-40 overflow-hidden">
+        <img src={item.foto_url || 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=300'}
+          alt={item.nama}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={e => { e.target.src = 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=300' }} />
         <div className="absolute inset-0 bg-gradient-to-t from-agro-dark/60 to-transparent" />
-        <span className={`absolute top-3 left-3 text-xs font-bold px-2 py-0.5 rounded-full ${gradeColor[item.grade] || gradeColor.A}`}>
+        <span className={`absolute top-3 right-3 text-xs font-bold px-2 py-0.5 rounded-full ${gradeColor}`}>
           Grade {item.grade}
         </span>
-        {/* Tombol Wishlist */}
-        <button
-          onClick={(e) => { e.stopPropagation(); onToggleWishlist(item) }}
-          className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
-            isWishlisted
-              ? 'bg-red-500 text-white'
-              : 'bg-black/40 text-white hover:bg-red-500/80'
-          }`}>
-          <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-white' : ''}`} />
+        <button onClick={toggleWishlist}
+          className="absolute top-3 left-3 w-8 h-8 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center transition-all">
+          <Heart className={`w-4 h-4 ${inWishlist ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
         </button>
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-white text-sm mb-1 truncate">{item.nama}</h3>
-        <div className="flex items-center gap-1 text-xs mb-1">
+        <div className="flex items-center gap-1 text-xs text-gray-500 mb-1">
+          <MapPin className="w-3 h-3" /> {item.lokasi}
+        </div>
+        <div className="flex items-center gap-1 text-xs mb-3">
           <Leaf className="w-3 h-3 text-agro-green" />
           <span className="text-agro-green truncate">{item.petani_name}</span>
         </div>
-        {item.lokasi && (
-          <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
-            <MapPin className="w-3 h-3" /> {item.lokasi}
-          </div>
-        )}
         <div className="flex items-center justify-between mb-3">
           <div>
             <p className="text-lg font-extrabold text-white">Rp {item.harga?.toLocaleString('id-ID')}</p>
             <p className="text-xs text-gray-500">/{item.satuan || 'kg'}</p>
           </div>
-          <p className="text-xs text-gray-500">Stok: {item.stok} kg</p>
+          <div className="flex items-center gap-1">
+            <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+            <span className="text-xs text-amber-400 font-semibold">{item.rating || 4.5}</span>
+          </div>
         </div>
         <button onClick={handleBeli}
           className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold py-2 rounded-xl transition-all">
@@ -86,44 +70,52 @@ function KomoditasCard({ item, wishlist, onToggleWishlist }) {
 }
 
 export default function BuyerHome() {
-  const { user }                = useAuth()
-  const [items, setItems]       = useState([])
-  const [loading, setLoading]   = useState(true)
-  const [search, setSearch]     = useState('')
+  const { user } = useAuth()
+  const [search, setSearch] = useState('')
+  const [komoditas, setKomoditas] = useState([])
   const [wishlist, setWishlist] = useState([])
-  const [orders, setOrders]     = useState([])
+  const [loading, setLoading] = useState(true)
 
-  // Load komoditas dari database
+  // Load komoditas dari API
   useEffect(() => {
-    api.get('/komoditas/').then(res => {
-      setItems(res.data.komoditas || [])
-    }).catch(() => setItems([])).finally(() => setLoading(false))
+    const loadKomoditas = async () => {
+      try {
+        const res = await komoditasAPI.list()
+        setKomoditas(res.data.komoditas || [])
+      } catch (error) {
+        console.error('Error loading komoditas:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadKomoditas()
+  }, [])
 
-    // Load orders
-    api.get('/orders/my').then(res => {
-      setOrders(res.data.orders || [])
-    }).catch(() => {})
-
-    // Load wishlist dari localStorage
+  // Load wishlist dari localStorage
+  useEffect(() => {
     const saved = localStorage.getItem('agrolens_wishlist')
     if (saved) setWishlist(JSON.parse(saved))
   }, [])
 
-  const handleToggleWishlist = (item) => {
-    const exists = wishlist.some(w => w.id === item.id)
-    const updated = exists
-      ? wishlist.filter(w => w.id !== item.id)
-      : [...wishlist, item]
+  const addToWishlist = (item) => {
+    const updated = [...wishlist, item]
     setWishlist(updated)
     localStorage.setItem('agrolens_wishlist', JSON.stringify(updated))
   }
 
-  const filtered = items.filter(k =>
-    k.nama?.toLowerCase().includes(search.toLowerCase()) ||
-    k.petani_name?.toLowerCase().includes(search.toLowerCase())
-  )
+  const removeFromWishlist = (id) => {
+    const updated = wishlist.filter(w => w.id !== id)
+    setWishlist(updated)
+    localStorage.setItem('agrolens_wishlist', JSON.stringify(updated))
+  }
 
-  const activeOrders = orders.filter(o => ['menunggu','dikonfirmasi','dikirim'].includes(o.status))
+  const isInWishlist = (id) => wishlist.some(w => w.id === id)
+
+  const filtered = komoditas.filter(k =>
+    k.nama.toLowerCase().includes(search.toLowerCase()) ||
+    k.petani_name.toLowerCase().includes(search.toLowerCase()) ||
+    (k.lokasi && k.lokasi.toLowerCase().includes(search.toLowerCase()))
+  )
 
   return (
     <BuyerLayout>
@@ -140,10 +132,10 @@ export default function BuyerHome() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { icon: ShoppingCart, label: 'Total Pesanan',  value: orders.length,        sub: 'Semua transaksi',  color: 'text-primary-400', bg: 'bg-primary-500/10' },
-          { icon: Package,      label: 'Pesanan Aktif',  value: activeOrders.length,  sub: 'Sedang diproses',  color: 'text-agro-green',  bg: 'bg-agro-green/10' },
-          { icon: Heart,        label: 'Wishlist',        value: wishlist.length,      sub: 'Produk disimpan',  color: 'text-red-400',     bg: 'bg-red-500/10' },
-          { icon: TrendingDown, label: 'Produk Tersedia', value: items.length,         sub: 'Dari petani',      color: 'text-amber-400',   bg: 'bg-amber-500/10' },
+          { icon: ShoppingCart, label: 'Total Pesanan',  value: '0', sub: 'Belum ada pesanan', color: 'text-primary-400', bg: 'bg-primary-500/10' },
+          { icon: Package,      label: 'Pesanan Aktif',  value: '0', sub: 'Sedang diproses',   color: 'text-agro-green',  bg: 'bg-agro-green/10' },
+          { icon: TrendingDown, label: 'Hemat vs Pasar', value: 'Rp 0', sub: 'Selisih harga',  color: 'text-amber-400',   bg: 'bg-amber-500/10' },
+          { icon: Star,         label: 'Review',         value: '0', sub: 'Total review',       color: 'text-purple-400',  bg: 'bg-purple-500/10' },
         ].map((s, i) => (
           <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-5">
             <div className={`w-11 h-11 ${s.bg} rounded-xl flex items-center justify-center mb-4`}>
@@ -159,12 +151,12 @@ export default function BuyerHome() {
       {/* Search */}
       <div className="relative mb-6">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-        <input type="text" placeholder="Cari komoditas atau petani..."
+        <input type="text" placeholder="Cari komoditas, petani, atau lokasi..."
           value={search} onChange={e => setSearch(e.target.value)}
           className="w-full bg-white/5 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-primary-500" />
       </div>
 
-      {/* Grid header */}
+      {/* Grid */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-bold text-white">
           Komoditas Tersedia
@@ -175,33 +167,28 @@ export default function BuyerHome() {
         </Link>
       </div>
 
-      {/* Loading */}
-      {loading && (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {[1,2,3,4].map(i => <div key={i} className="h-64 bg-white/5 rounded-2xl animate-pulse" />)}
-        </div>
-      )}
-
-      {/* Empty */}
-      {!loading && filtered.length === 0 && (
+      {loading ? (
         <div className="text-center py-16">
-          <p className="text-4xl mb-4">🌾</p>
-          <p className="text-white font-semibold mb-1">
-            {items.length === 0 ? 'Belum ada komoditas terdaftar' : 'Tidak ditemukan'}
-          </p>
-          <p className="text-gray-400 text-sm">
-            {items.length === 0 ? 'Petani belum upload produk' : 'Coba kata kunci lain'}
-          </p>
+          <div className="w-8 h-8 border-2 border-primary-400/30 border-t-primary-400 rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-gray-400 text-sm">Memuat komoditas...</p>
         </div>
-      )}
-
-      {/* Grid */}
-      {!loading && filtered.length > 0 && (
+      ) : filtered.length > 0 ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {filtered.map(item => (
-            <KomoditasCard key={item.id} item={item}
-              wishlist={wishlist} onToggleWishlist={handleToggleWishlist} />
+            <KomoditasCard 
+              key={item.id} 
+              item={item}
+              inWishlist={isInWishlist(item.id)}
+              onAddWishlist={addToWishlist}
+              onRemoveWishlist={removeFromWishlist}
+            />
           ))}
+        </div>
+      ) : (
+        <div className="text-center py-16">
+          <p className="text-4xl mb-4">🔍</p>
+          <p className="text-white font-semibold mb-1">Tidak ditemukan</p>
+          <p className="text-gray-400 text-sm">Coba kata kunci lain</p>
         </div>
       )}
 
@@ -213,7 +200,7 @@ export default function BuyerHome() {
           <p className="text-gray-400 text-sm">Tanpa perantara — hemat hingga 30% dibanding harga pasar</p>
         </div>
         <Link to="/buyer/browse"
-          className="flex-shrink-0 bg-agro-green hover:bg-agro-teal text-white font-bold px-6 py-3 rounded-xl transition-all">
+          className="flex-shrink-0 bg-agro-green hover:bg-agro-teal text-white font-bold px-6 py-3 rounded-xl transition-all hover:scale-105">
           Belanja Sekarang
         </Link>
       </div>

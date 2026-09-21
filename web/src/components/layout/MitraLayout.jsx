@@ -25,11 +25,12 @@ export default function MitraLayout({ children }) {
   const handleLogout = () => { logout(); navigate('/') }
 
   return (
-    <div className="min-h-screen bg-agro-dark flex">
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-agro-dark border-r border-white/10 transform transition-transform duration-300
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:block`}>
+    <div className="min-h-screen bg-agro-dark">
+      {/* Sidebar - fixed di semua breakpoint, gak ikut scroll */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-agro-dark border-r border-white/10 flex flex-col transform transition-transform duration-300
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
 
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+        <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10 shrink-0">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{background:'#f59e0b'}}>
             <Leaf className="w-5 h-5 text-white" />
           </div>
@@ -39,7 +40,7 @@ export default function MitraLayout({ children }) {
           </div>
         </div>
 
-        <nav className="px-3 py-4 space-y-1">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon   = item.icon
             const active = location.pathname === item.to
@@ -57,7 +58,7 @@ export default function MitraLayout({ children }) {
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+        <div className="p-4 border-t border-white/10 shrink-0">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-9 h-9 bg-amber-500/20 rounded-full flex items-center justify-center">
               <User className="w-4 h-4 text-amber-400" />
@@ -78,7 +79,8 @@ export default function MitraLayout({ children }) {
         <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main - kasih margin kiri sebesar sidebar di desktop */}
+      <div className="flex flex-col min-h-screen lg:ml-64">
         <header className="sticky top-0 z-30 bg-agro-dark/90 backdrop-blur border-b border-white/10 px-4 lg:px-8 py-4 flex items-center gap-4">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-400 hover:text-white">
             <Menu className="w-6 h-6" />
@@ -96,7 +98,7 @@ export default function MitraLayout({ children }) {
           </div>
         </header>
 
-        <main className="flex-1 p-4 lg:p-8 overflow-auto">
+        <main className="flex-1 p-4 lg:p-8">
           {children}
         </main>
       </div>

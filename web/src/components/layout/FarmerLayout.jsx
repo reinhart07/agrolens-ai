@@ -25,13 +25,14 @@ export default function FarmerLayout({ children }) {
   const handleLogout = () => { logout(); navigate('/') }
 
   return (
-    <div className="min-h-screen bg-agro-dark flex">
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-agro-dark border-r border-white/10 transform transition-transform duration-300 ${sidebarOpen?'translate-x-0':'-translate-x-full'} lg:translate-x-0 lg:static lg:block`}>
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+    <div className="min-h-screen bg-agro-dark">
+      {/* Sidebar - fixed di semua breakpoint, gak ikut scroll */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-agro-dark border-r border-white/10 flex flex-col transform transition-transform duration-300 ${sidebarOpen?'translate-x-0':'-translate-x-full'} lg:translate-x-0`}>
+        <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10 shrink-0">
           <div className="w-9 h-9 bg-agro-green rounded-xl flex items-center justify-center"><Leaf className="w-5 h-5 text-white"/></div>
           <div><p className="font-extrabold text-white leading-none">AgroLens AI</p><p className="text-xs text-agro-green">Dashboard Petani</p></div>
         </div>
-        <nav className="px-3 py-4 space-y-1 overflow-y-auto" style={{maxHeight:'calc(100vh - 180px)'}}>
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon
             const active = location.pathname === item.to
@@ -44,7 +45,7 @@ export default function FarmerLayout({ children }) {
             )
           })}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+        <div className="p-4 border-t border-white/10 shrink-0">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-9 h-9 bg-agro-green/20 rounded-full flex items-center justify-center"><User className="w-4 h-4 text-agro-green"/></div>
             <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">{user?.name}</p><p className="text-xs text-gray-500 capitalize">{user?.role}</p></div>
@@ -54,8 +55,11 @@ export default function FarmerLayout({ children }) {
           </button>
         </div>
       </aside>
+
       {sidebarOpen && <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)}/>}
-      <div className="flex-1 flex flex-col min-w-0">
+
+      {/* Main - kasih margin kiri sebesar sidebar di desktop */}
+      <div className="flex flex-col min-h-screen lg:ml-64">
         <header className="sticky top-0 z-30 bg-agro-dark/90 backdrop-blur border-b border-white/10 px-4 lg:px-8 py-4 flex items-center gap-4">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-400 hover:text-white"><Menu className="w-6 h-6"/></button>
           <div className="flex-1"/>
@@ -65,7 +69,7 @@ export default function FarmerLayout({ children }) {
             <span className="text-sm font-medium text-white hidden sm:block">{user?.name}</span>
           </div>
         </header>
-        <main className="flex-1 p-4 lg:p-8 overflow-auto">{children}</main>
+        <main className="flex-1 p-4 lg:p-8">{children}</main>
       </div>
     </div>
   )

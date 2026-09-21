@@ -1,6 +1,3 @@
-/**
- * MapPicker — Klik peta → alamat otomatis (tanpa input manual)
- */
 import { useState, useEffect, useRef } from 'react'
 import { MapPin, Loader } from 'lucide-react'
 
@@ -8,14 +5,16 @@ export default function MapPicker({ onLocationSelect, initialAddress = '', heigh
   const mapRef     = useRef(null)
   const leafletRef = useRef(null)
   const markerRef  = useRef(null)
-  const [address, setAddress]   = useState(initialAddress)
-  const [loading, setLoading]   = useState(false)
-  const [mapReady, setMapReady] = useState(false)
+  const [address, setAddress]     = useState(initialAddress)
+  const [mapReady, setMapReady]   = useState(false)
+  const [coords, setCoords]       = useState(null)
+  const [error, setError]         = useState('')
 
   useEffect(() => {
     if (!document.getElementById('leaflet-css')) {
       const link = document.createElement('link')
-      link.id = 'leaflet-css'; link.rel = 'stylesheet'
+      link.id = 'leaflet-css'
+      link.rel = 'stylesheet'
       link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
       document.head.appendChild(link)
     }
@@ -24,17 +23,8 @@ export default function MapPicker({ onLocationSelect, initialAddress = '', heigh
     script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
     script.onload = () => initMap()
     document.head.appendChild(script)
-    return () => {
-      if (leafletRef.current) { leafletRef.current.remove(); leafletRef.current = null }
-    }
+    return () => { if (leafletRef.current) { leafletRef.current.remove(); leafletRef.current = null } }
   }, [])
-
-  // Kalau initialAddress berubah dari luar, geocode otomatis
-  useEffect(() => {
-    if (initialAddress && initialAddress !== address && leafletRef.current) {
-      geocodeAddress(initialAddress)
-    }
-  }, [initialAddress])
 
   const initMap = () => {
     if (!mapRef.current || leafletRef.current) return
@@ -43,25 +33,19 @@ export default function MapPicker({ onLocationSelect, initialAddress = '', heigh
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors', maxZoom: 18,
     }).addTo(map)
-
-    // Klik peta → set marker + reverse geocode
     map.on('click', (e) => {
       setMarker(map, e.latlng.lat, e.latlng.lng)
       reverseGeocode(e.latlng.lat, e.latlng.lng)
     })
-
     leafletRef.current = map
     setMapReady(true)
-
-    // Kalau ada initialAddress, geocode langsung
-    if (initialAddress) geocodeAddress(initialAddress, map)
+    if (initialAddress) searchAddress(initialAddress, map)
   }
 
   const setMarker = (map, lat, lng) => {
     const L = window.L
-    if (markerRef.current) {
-      markerRef.current.setLatLng([lat, lng])
-    } else {
+    if (markerRef.current) { markerRef.current.setLatLng([lat, lng]) }
+    else {
       const icon = L.divIcon({
         className: '',
         html: `<div style="width:28px;height:28px;background:#1D9E75;border:3px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>`,
@@ -74,15 +58,12 @@ export default function MapPicker({ onLocationSelect, initialAddress = '', heigh
       })
     }
     map.setView([lat, lng], 15)
+    setCoords({ lat, lng })
   }
 
   const reverseGeocode = async (lat, lng) => {
-    setLoading(true)
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
-        { headers: { 'Accept-Language': 'id' } }
-      )
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, { headers: { 'Accept-Language': 'id' } })
       const data = await res.json()
       const addr = data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`
       setAddress(addr)
@@ -91,31 +72,32 @@ export default function MapPicker({ onLocationSelect, initialAddress = '', heigh
       const addr = `${lat.toFixed(5)}, ${lng.toFixed(5)}`
       setAddress(addr)
       if (onLocationSelect) onLocationSelect({ lat, lng, address: addr })
-    } finally {
-      setLoading(false)
     }
   }
 
-  const geocodeAddress = async (query, map) => {
-    if (!query?.trim()) return
+  const searchAddress = async (query, map) => {
+    if (!query.trim()) return
+    setError('')
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
-        { headers: { 'Accept-Language': 'id' } }
-      )
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=id`, { headers: { 'Accept-Language': 'id' } })
       const data = await res.json()
-      if (data.length > 0) {
-        const { lat, lon } = data[0]
-        const m = map || leafletRef.current
-        if (m) setMarker(m, parseFloat(lat), parseFloat(lon))
-        setAddress(query)
-      }
-    } catch { }
+      if (data.length === 0) { setError('Alamat tidak ditemukan.'); return }
+      const { lat, lon, display_name } = data[0]
+      const m = map || leafletRef.current
+      if (m) setMarker(m, parseFloat(lat), parseFloat(lon))
+      setAddress(display_name)
+      if (onLocationSelect) onLocationSelect({ lat: parseFloat(lat), lng: parseFloat(lon), address: display_name })
+    } catch { setError('Gagal mencari alamat.') }
   }
 
   return (
-    <div className="space-y-2">
-      {/* Map */}
+    <div className="space-y-3">
+      {address && (
+        <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex items-start gap-2">
+          <MapPin className="w-4 h-4 text-agro-green flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-gray-300">{address}</p>
+        </div>
+      )}
       <div className="rounded-xl overflow-hidden border border-white/10 relative">
         <div ref={mapRef} style={{ height, width: '100%', background: '#1a2035' }} />
         {!mapReady && (
@@ -126,24 +108,10 @@ export default function MapPicker({ onLocationSelect, initialAddress = '', heigh
             </div>
           </div>
         )}
-        {loading && mapReady && (
-          <div className="absolute bottom-3 left-3 bg-agro-dark/80 rounded-xl px-3 py-1.5 flex items-center gap-2">
-            <Loader className="w-3 h-3 text-agro-green animate-spin" />
-            <span className="text-xs text-gray-300">Mendapatkan alamat...</span>
-          </div>
-        )}
       </div>
-
-      {/* Alamat hasil klik */}
-      {address && (
-        <div className="flex items-start gap-2 bg-agro-green/10 border border-agro-green/20 rounded-xl px-3 py-2.5">
-          <MapPin className="w-3.5 h-3.5 text-agro-green flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-gray-300 leading-relaxed">{address}</p>
-        </div>
-      )}
-      {!address && mapReady && (
-        <p className="text-xs text-gray-600 text-center">💡 Klik di peta atau drag marker untuk memilih lokasi</p>
-      )}
+      {error && <p className="text-red-400 text-xs">{error}</p>}
+      {coords && <p className="text-xs text-gray-500">📍 {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)} — Klik peta atau drag marker untuk ubah lokasi</p>}
+      {!coords && mapReady && <p className="text-xs text-gray-600">💡 Klik di peta untuk pilih lokasi atau drag marker untuk ubah</p>}
     </div>
   )
 }
